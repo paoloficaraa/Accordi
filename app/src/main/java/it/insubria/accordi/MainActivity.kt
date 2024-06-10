@@ -5,11 +5,20 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import be.tarsos.dsp.AudioDispatcher
 import be.tarsos.dsp.io.android.AndroidAudioInputStream
+import be.tarsos.dsp.io.android.AudioDispatcherFactory
+import be.tarsos.dsp.pitch.PitchDetectionHandler
+import be.tarsos.dsp.pitch.PitchDetectionResult
+import be.tarsos.dsp.pitch.PitchProcessor
 import com.google.firebase.database.FirebaseDatabase
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.app.ActivityCompat
 
 class MainActivity : AppCompatActivity() {
-    val database = FirebaseDatabase.getInstance()
+    private val database = FirebaseDatabase.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -19,7 +28,51 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val audioRecordResult = initAudioRecord(this)
-        val mInputStream = AndroidAudioInputStream(audioRecordResult!!.audioRecord, audioRecordResult.format)
+
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            // Se non abbiamo il permesso, lo richiediamo
+            ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
+        } else {
+            // Se abbiamo già il permesso, avviamo la rilevazione del pitch
+            permissionToRecordAccepted = true
+            startPitchDetection()
+        }
+    }
+
+    private fun startPitchDetection() {
+        val dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(44100, 8192, 4096)
+        val pitchDetectionHandler = PitchDetectionHandler { res, _ ->
+            if (res.isPitched) {
+                runOnUiThread {
+                    // Mostra il valore della nota rilevata
+                    // Puoi convertire la frequenza in una nota musicale se necessario
+                    println("Pitch: ${res.pitch}")
+                }
+            }
+        }
+        val pitchProcessor = PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, 44100F, 8192, pitchDetectionHandler)
+        dispatcher.addAudioProcessor(pitchProcessor)
+        Thread(dispatcher, "Audio Dispatcher").start()
+    }
+
+    private var permissionToRecordAccepted = false
+    private val permissions = arrayOf(Manifest.permission.RECORD_AUDIO)
+    private val REQUEST_RECORD_AUDIO_PERMISSION = 200
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            REQUEST_RECORD_AUDIO_PERMISSION -> {
+                permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
+                if (permissionToRecordAccepted) {
+                    startPitchDetection()
+                }
+            }
+        }
+        if(!permissionToRecordAccepted) finish()
     }
 }
