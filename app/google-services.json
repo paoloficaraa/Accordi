@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "658769461298",
+    "firebase_url": "https://accordi-ceb9d-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "accordi-ceb9d",
+    "storage_bucket": "accordi-ceb9d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658769461298:android:ebe6aeca5769b4576abc2b",
+        "android_client_info": {
+          "package_name": "it.insubria.accordi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJYTsxo1cnt13bhGw2v1RNITVaakYRIlo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
