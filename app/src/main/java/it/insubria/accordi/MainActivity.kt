@@ -14,10 +14,18 @@ import be.tarsos.dsp.pitch.PitchProcessor
 import com.google.firebase.database.FirebaseDatabase
 import android.Manifest
 import android.content.pm.PackageManager
+import android.widget.ImageView
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.core.app.ActivityCompat
+import java.math.BigDecimal
+import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
     private val database = FirebaseDatabase.getInstance()
+    private var permissionToRecordAccepted = false
+    private val permissions = arrayOf(Manifest.permission.RECORD_AUDIO)
+    private val REQUEST_RECORD_AUDIO_PERMISSION = 200
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,9 +52,16 @@ class MainActivity : AppCompatActivity() {
         val pitchDetectionHandler = PitchDetectionHandler { res, _ ->
             if (res.isPitched) {
                 runOnUiThread {
-                    // Mostra il valore della nota rilevata
-                    // Puoi convertire la frequenza in una nota musicale se necessario
-                    println("Pitch: ${res.pitch}")
+//                    println("Pitch: ${res.pitch}")
+                    val noteHandler = NoteHandler()
+                    val (note, deviation) = noteHandler.getNoteAndDeviationFromFrequency(res.pitch.toDouble())
+                    findViewById<TextView>(R.id.noteTextView).text = "Nota: $note"
+                    findViewById<TextView>(R.id.frequencyTextView).text = "Frequenza: ${res.pitch} Hz"
+                    updateTuningBar(deviation.toDouble())
+//                    val ref = database.getReference("note")
+//                    ref.setValue(note)
+//                    val ref2 = database.getReference("deviation")
+//                    ref2.setValue(deviation)
                 }
             }
         }
@@ -54,10 +69,6 @@ class MainActivity : AppCompatActivity() {
         dispatcher.addAudioProcessor(pitchProcessor)
         Thread(dispatcher, "Audio Dispatcher").start()
     }
-
-    private var permissionToRecordAccepted = false
-    private val permissions = arrayOf(Manifest.permission.RECORD_AUDIO)
-    private val REQUEST_RECORD_AUDIO_PERMISSION = 200
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -74,5 +85,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
         if(!permissionToRecordAccepted) finish()
+    }
+
+    private fun updateTuningBar(deviation: Double) {
+        findViewById<SeekBar>(R.id.tuningBar).progress = (50 + deviation).roundToInt()
+
+        if(deviation in -3.0..3.0)
+            findViewById<ImageView>(R.id.tuningIndicator).visibility = ImageView.VISIBLE
+        else
+            findViewById<ImageView>(R.id.tuningIndicator).visibility = ImageView.INVISIBLE
     }
 }

@@ -47,7 +47,6 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation(libs.firebase.database.ktx)
     implementation(files("..\\lib\\TarsosDSP-latest.jar"))
-    implementation("com.jakewharton.timber:timber:4.7.1")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
