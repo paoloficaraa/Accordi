@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Accordi</string>
+    <string name="note_text">Nota: %s</string>
+    <string name="frequency_text">Frequenza: %f Hz</string>
+    <string name="frequenza_hz">Frequenza: - Hz</string>
+    <string name="scale_text">La scala rilevata è: %s</string>
 </resources>

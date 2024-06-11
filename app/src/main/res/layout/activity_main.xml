@@ -23,7 +23,7 @@
         android:layout_below="@id/noteTextView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
-        android:text="Frequenza: - Hz"
+        android:text="@string/frequenza_hz"
         android:textSize="20sp" />
 
     <SeekBar
@@ -45,6 +45,16 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
         android:src="@drawable/baseline_check_circle_24"
+        android:visibility="invisible" />
+
+    <TextView
+        android:id="@+id/ScaleTv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tuningIndicator"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:textSize="20sp"
         android:visibility="invisible" />
 
 </RelativeLayout>
