@@ -5,11 +5,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import be.tarsos.dsp.AudioDispatcher
-import be.tarsos.dsp.io.android.AndroidAudioInputStream
 import be.tarsos.dsp.io.android.AudioDispatcherFactory
 import be.tarsos.dsp.pitch.PitchDetectionHandler
-import be.tarsos.dsp.pitch.PitchDetectionResult
 import be.tarsos.dsp.pitch.PitchProcessor
 import com.google.firebase.database.FirebaseDatabase
 import android.Manifest
@@ -18,7 +15,6 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
-import java.math.BigDecimal
 import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
@@ -26,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     private var permissionToRecordAccepted = false
     private val permissions = arrayOf(Manifest.permission.RECORD_AUDIO)
     private val REQUEST_RECORD_AUDIO_PERMISSION = 200
+    private val pitchDetector = PitchDetector(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,31 +40,8 @@ class MainActivity : AppCompatActivity() {
         } else {
             // Se abbiamo già il permesso, avviamo la rilevazione del pitch
             permissionToRecordAccepted = true
-            startPitchDetection()
+            pitchDetector.startPitchDetection()
         }
-    }
-
-    private fun startPitchDetection() {
-        val dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(44100, 8192, 4096)
-        val pitchDetectionHandler = PitchDetectionHandler { res, _ ->
-            if (res.isPitched) {
-                runOnUiThread {
-//                    println("Pitch: ${res.pitch}")
-                    val noteHandler = NoteHandler()
-                    val (note, deviation) = noteHandler.getNoteAndDeviationFromFrequency(res.pitch.toDouble())
-                    findViewById<TextView>(R.id.noteTextView).text = "Nota: $note"
-                    findViewById<TextView>(R.id.frequencyTextView).text = "Frequenza: ${res.pitch} Hz"
-                    updateTuningBar(deviation.toDouble())
-//                    val ref = database.getReference("note")
-//                    ref.setValue(note)
-//                    val ref2 = database.getReference("deviation")
-//                    ref2.setValue(deviation)
-                }
-            }
-        }
-        val pitchProcessor = PitchProcessor(PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, 44100F, 8192, pitchDetectionHandler)
-        dispatcher.addAudioProcessor(pitchProcessor)
-        Thread(dispatcher, "Audio Dispatcher").start()
     }
 
     override fun onRequestPermissionsResult(
@@ -80,17 +54,17 @@ class MainActivity : AppCompatActivity() {
             REQUEST_RECORD_AUDIO_PERMISSION -> {
                 permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
                 if (permissionToRecordAccepted) {
-                    startPitchDetection()
+                    pitchDetector.startPitchDetection()
                 }
             }
         }
         if(!permissionToRecordAccepted) finish()
     }
 
-    private fun updateTuningBar(deviation: Double) {
-        findViewById<SeekBar>(R.id.tuningBar).progress = (50 + deviation).roundToInt()
+    internal fun updateTuningBar(deviation: Double) {
+        findViewById<SeekBar>(R.id.tuningBar).progress = (50 + deviation * 10).roundToInt()
 
-        if(deviation in -3.0..3.0)
+        if(deviation in -0.5..0.5)
             findViewById<ImageView>(R.id.tuningIndicator).visibility = ImageView.VISIBLE
         else
             findViewById<ImageView>(R.id.tuningIndicator).visibility = ImageView.INVISIBLE
