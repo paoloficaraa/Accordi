@@ -6,13 +6,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import com.google.firebase.auth.FirebaseAuth
 import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
@@ -43,6 +46,9 @@ class MainActivity : AppCompatActivity() {
         val btnStartRecognition = findViewById<TextView>(R.id.startRecognitionBtn)
         val btnStopRecognition = findViewById<TextView>(R.id.stopRecognitionBtn)
         val btnClearNotes = findViewById<Button>(R.id.clearNotesBtn)
+        val btnLogin = findViewById<Button>(R.id.btnLogin)
+        val btnRegister = findViewById<Button>(R.id.btnRegistration)
+        val btnLogout = findViewById<Button>(R.id.btnLogout)
 
         btnClearNotes.setOnClickListener {
             pitchDetector.clearNotes()
@@ -59,6 +65,33 @@ class MainActivity : AppCompatActivity() {
             pitchDetector.scaleRecognition = false
             findViewById<TextView>(R.id.ScaleTv).visibility = TextView.INVISIBLE
             Toast.makeText(this, "Riconoscimento scala disattivato", Toast.LENGTH_SHORT).show()
+        }
+
+        btnLogin.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
+        btnRegister.setOnClickListener {
+
+        }
+
+        btnLogout.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+            App.utente = null
+            btnLogout.visibility = View.GONE
+            btnLogin.visibility = View.VISIBLE
+            btnRegister.visibility = View.VISIBLE
+        }
+
+        if (App.utente != null) {
+            btnLogout.visibility = View.VISIBLE
+            btnLogin.visibility = View.GONE
+            btnRegister.visibility = View.GONE
+        } else {
+            btnLogout.visibility = View.GONE
+            btnLogin.visibility = View.VISIBLE
+            btnRegister.visibility = View.VISIBLE
         }
 
     }

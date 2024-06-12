@@ -13,7 +13,20 @@
           "package_name": "it.insubria.accordi"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "658769461298-u35gh68bp8rtilkpu6hc0eldustgee4r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.insubria.accordi",
+            "certificate_hash": "60d3da22dfadb8296dcd9258b8913d2ee11cea07"
+          }
+        },
+        {
+          "client_id": "658769461298-b251cdtgejtv9dcal9pglasmpo7vn7sb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAJYTsxo1cnt13bhGw2v1RNITVaakYRIlo"
@@ -21,7 +34,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "658769461298-b251cdtgejtv9dcal9pglasmpo7vn7sb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
