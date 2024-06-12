@@ -5,20 +5,17 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import be.tarsos.dsp.io.android.AudioDispatcherFactory
-import be.tarsos.dsp.pitch.PitchDetectionHandler
-import be.tarsos.dsp.pitch.PitchProcessor
-import com.google.firebase.database.FirebaseDatabase
 import android.Manifest
 import android.content.pm.PackageManager
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
-    private val database = FirebaseDatabase.getInstance()
     private var permissionToRecordAccepted = false
     private val permissions = arrayOf(Manifest.permission.RECORD_AUDIO)
     private val REQUEST_RECORD_AUDIO_PERMISSION = 200
@@ -42,6 +39,28 @@ class MainActivity : AppCompatActivity() {
             permissionToRecordAccepted = true
             pitchDetector.startPitchDetection()
         }
+
+        val btnStartRecognition = findViewById<TextView>(R.id.startRecognitionBtn)
+        val btnStopRecognition = findViewById<TextView>(R.id.stopRecognitionBtn)
+        val btnClearNotes = findViewById<Button>(R.id.clearNotesBtn)
+
+        btnClearNotes.setOnClickListener {
+            pitchDetector.clearNotes()
+            Toast.makeText(this, "Note rimosse", Toast.LENGTH_SHORT).show()
+        }
+
+        btnStartRecognition.setOnClickListener {
+            pitchDetector.scaleRecognition = true
+            btnClearNotes.visibility = Button.VISIBLE
+            Toast.makeText(this, "Riconoscimento scala attivato", Toast.LENGTH_SHORT).show()
+        }
+
+        btnStopRecognition.setOnClickListener {
+            pitchDetector.scaleRecognition = false
+            findViewById<TextView>(R.id.ScaleTv).visibility = TextView.INVISIBLE
+            Toast.makeText(this, "Riconoscimento scala disattivato", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     override fun onRequestPermissionsResult(

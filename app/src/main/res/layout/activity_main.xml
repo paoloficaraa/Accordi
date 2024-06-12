@@ -57,4 +57,33 @@
         android:textSize="20sp"
         android:visibility="invisible" />
 
+    <Button
+        android:id="@+id/startRecognitionBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ScaleTv"
+        android:layout_marginTop="128dp"
+        android:text="Avvia riconoscimento scala"
+        android:layout_centerHorizontal="true"
+        />
+    <Button
+        android:id="@+id/stopRecognitionBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/startRecognitionBtn"
+        android:layout_marginTop="20dp"
+        android:text="Stoppa riconoscimento scala"
+        android:layout_centerHorizontal="true"
+        />
+    <Button
+        android:id="@+id/clearNotesBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/stopRecognitionBtn"
+        android:layout_marginTop="20dp"
+        android:text="Azzera note"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"
+        />
+
 </RelativeLayout>
