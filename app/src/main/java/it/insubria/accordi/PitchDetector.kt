@@ -1,7 +1,6 @@
 package it.insubria.accordi
 
 import android.widget.TextView
-import android.widget.Toast
 import be.tarsos.dsp.AudioDispatcher
 import be.tarsos.dsp.io.android.AudioDispatcherFactory
 import be.tarsos.dsp.pitch.PitchDetectionHandler
@@ -22,7 +21,6 @@ const val MIN_CONFIDENCE = 0.75
 
 class PitchDetector(private val context: MainActivity) {
     //attributi per la gestione delle note
-    private val noteHandler = NoteHandler()
     private val notes = mutableListOf<Note>() //lista delle note rilevate
     private var lastNote: String? = null //ultima nota rilevata
     @Volatile
@@ -67,8 +65,8 @@ class PitchDetector(private val context: MainActivity) {
     private fun handlePitchedResult(res: PitchDetectionResult) {
         context.runOnUiThread {
             if (res.probability < MIN_CONFIDENCE) {
-                val (note , deviation) = noteHandler.getNoteAndDeviationFromFrequency(res.pitch.toDouble())
-                updateNoteAndDetectionTime(note)
+                val (note , deviation) = NoteHandler.getNoteAndDeviationFromFrequency(res.pitch.toDouble())
+                updateLastNoteAndDetectionTime(note)
                 if (isConsecutiveNote()) {
                     handleConsecutiveNote(note , res.pitch , deviation)
                 }
@@ -77,7 +75,7 @@ class PitchDetector(private val context: MainActivity) {
     }
 
     //funzione per aggiornare l'ultima nota rilevata e il tempo dell'ultima rilevazione così da non contare una nota sbagliata
-    private fun updateNoteAndDetectionTime(note: Note) {
+    private fun updateLastNoteAndDetectionTime(note: Note) {
         synchronized(this) {
             if (lastNote == null || lastNote != note.note) {
                 consecutiveNoteCount = 0
@@ -100,11 +98,14 @@ class PitchDetector(private val context: MainActivity) {
                 notes.add(note)
             }
 
-            updateUI(note.toString() , pitch , deviation)
+            updateUI(note.note + note.octave, pitch , deviation)
 
             if (notes.size == 7 && scaleRecognition) {
-                val scale = noteHandler.getScale(notes.map { it.note })
+                val scale = NoteHandler.getScale(notes.map { it.note })
                 val scaleTv = context.findViewById<TextView>(R.id.ScaleTv)
+                if(App.utente != null) {
+                    DbHandler.saveScale(Scala(notes , scale) , App.utente!!)
+                }
                 scaleTv.text = context.getString(R.string.scale_text , scale)
                 scaleTv.visibility = TextView.VISIBLE
                 notes.clear()

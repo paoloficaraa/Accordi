@@ -1,7 +1,7 @@
 package it.insubria.accordi
 
 data class Note(val note: String, val octave: String, val frequency: Double) {
-    constructor(note: String, octave: String) : this(note, octave, 0.0)
+//    constructor(note: String, octave: String) : this(note, octave, 0.0)
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -23,8 +23,6 @@ data class Note(val note: String, val octave: String, val frequency: Double) {
     }
 
     override fun toString(): String {
-        return note + octave
+        return "Note(note='$note', octave='$octave', frequency=$frequency)"
     }
-
-
 }
