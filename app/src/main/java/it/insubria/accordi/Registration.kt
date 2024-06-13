@@ -19,19 +19,19 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
-class LoginActivity : AppCompatActivity() {
+class Registration : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var gso: GoogleSignInOptions
     private val RC_SIGN_IN = 9001
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout_login_form)
+        setContentView(R.layout.layout_registration_form)
 
-        val usernameEditText = findViewById<EditText>(R.id.emailEditText)
-        val passwordEditText = findViewById<EditText>(R.id.passwordEditText)
-        val loginButton = findViewById<Button>(R.id.loginButton)
-        val googleSignInButton = findViewById<SignInButton>(R.id.googleSignInButton)
+        val usernameEditText = findViewById<EditText>(R.id.emailEt)
+        val passwordEditText = findViewById<EditText>(R.id.passwordEt)
+        val registrationButton = findViewById<Button>(R.id.registrationBtn)
+        val googleBtn = findViewById<SignInButton>(R.id.googleBtn)
 
         FirebaseApp.initializeApp(this)
         auth = FirebaseAuth.getInstance()
@@ -41,18 +41,18 @@ class LoginActivity : AppCompatActivity() {
             .build()
         val googleSignInClient = GoogleSignIn.getClient(this, gso)
 
-        loginButton.setOnClickListener {
+        registrationButton.setOnClickListener {
             val email = usernameEditText.text.toString()
             val password = passwordEditText.text.toString()
-            auth.signInWithEmailAndPassword(email, password)
+            auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        Toast.makeText(this, "Accesso avvenuto con successo", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Registrazione avvenuta con successo", Toast.LENGTH_SHORT).show()
                         App.utente = auth.currentUser
                         startActivity(Intent(this, MainActivity::class.java))
                         finish()
                     } else {
-                        Toast.makeText(this, "Errore in accesso", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Errore in registrazione", Toast.LENGTH_SHORT).show()
                     }
                 }
         }
@@ -66,12 +66,11 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        googleSignInButton.setOnClickListener {
+        googleBtn.setOnClickListener {
             val signInIntent = googleSignInClient.signInIntent
             signInIntentLauncher.launch(signInIntent)
         }
     }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN_IN) {
@@ -85,7 +84,7 @@ class LoginActivity : AppCompatActivity() {
             val account = completedTask.getResult(ApiException::class.java)
             firebaseAuthWithGoogle(account?.idToken!!)
         } catch (e: ApiException) {
-            Toast.makeText(this, "Accesso con google fallito", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Registrazione con google fallita", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -94,12 +93,12 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithCredential(credential)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(this, "Accesso avvenuto con successo", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Registrazione con google avvenuta con successo", Toast.LENGTH_SHORT).show()
                     App.utente = auth.currentUser
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {
-                    Toast.makeText(this, "Accesso con google fallito", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Registrazione con google fallita", Toast.LENGTH_SHORT).show()
                 }
             }
     }

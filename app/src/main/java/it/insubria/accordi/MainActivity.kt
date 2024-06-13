@@ -68,12 +68,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnLogin.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, LoginActivity::class.java))
         }
 
         btnRegister.setOnClickListener {
-
+            startActivity(Intent(this, Registration::class.java))
         }
 
         btnLogout.setOnClickListener {
