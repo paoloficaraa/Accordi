@@ -8,37 +8,43 @@
     android:padding="16dp"
     tools:context=".MainActivity">
 
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
     <RelativeLayout
         android:id="@+id/noteCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:padding="16dp"
         android:background="@drawable/bg_card"
         android:elevation="8dp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/noteTextView"
+            style="@style/TextAppearance.Accordi.Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:text="Nota: -"
-            android:textSize="30sp"
-            style="@style/TextAppearance.Accordi.Title" />
+            android:textSize="30sp" />
 
         <TextView
             android:id="@+id/frequencyTextView"
+            style="@style/TextAppearance.Accordi.Subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/noteTextView"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
             android:text="@string/frequenza_hz"
-            android:textSize="20sp"
-            style="@style/TextAppearance.Accordi.Subtitle" />
+            android:textSize="20sp" />
     </RelativeLayout>
 
     <SeekBar
@@ -46,13 +52,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:enabled="false"
         android:max="100"
         android:progress="50"
-        android:enabled="false"
         android:progressTint="@color/primary"
-        app:layout_constraintTop_toBottomOf="@id/noteCard"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/noteCard" />
 
     <ImageView
         android:id="@+id/tuningIndicator"
@@ -62,16 +68,16 @@
         android:contentDescription="Indica se è in tune la nota suonata"
         android:src="@drawable/baseline_check_circle_24"
         android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@id/tuningBar"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/tuningBar" />
 
     <TextView
         android:id="@+id/ScaleTv"
+        style="@style/TextAppearance.Accordi.Subtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="52dp"
-        style="@style/TextAppearance.Accordi.Subtitle"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -124,6 +130,7 @@
         app:layout_constraintTop_toBottomOf="@id/layoutScaleButtons" />
 
     <LinearLayout
+        android:id="@+id/layoutButtons2"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -175,11 +182,16 @@
             android:layout_weight="0.5"
             android:text="Esci"
             android:visibility="gone" />
-    </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        <Button
+            android:id="@+id/btnBackToMain"
+            style="@style/Widget.Accordi.Button.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="0.5"
+            android:text="Indietro"
+            android:visibility="gone" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,22 +1,23 @@
 package it.insubria.accordi
 
-import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Bundle
 import android.view.View
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
 import kotlin.math.roundToInt
 
@@ -30,15 +31,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v , insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            v.setPadding(systemBars.left , systemBars.top , systemBars.right , systemBars.bottom)
             insets
         }
 
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             // Se non abbiamo il permesso, lo richiediamo
-            ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION)
+            ActivityCompat.requestPermissions(this , permissions , REQUEST_RECORD_AUDIO_PERMISSION)
         } else {
             // Se abbiamo già il permesso, avviamo la rilevazione del pitch
             permissionToRecordAccepted = true
@@ -52,30 +53,32 @@ class MainActivity : AppCompatActivity() {
         val btnRegister = findViewById<Button>(R.id.btnRegistration)
         val btnLogout = findViewById<Button>(R.id.btnLogout)
         val btnScaleList = findViewById<Button>(R.id.btnScaleList)
+        val btnBackToMain = findViewById<Button>(R.id.btnBackToMain)
 
         btnClearNotes.setOnClickListener {
             pitchDetector.clearNotes()
-            Toast.makeText(this, "Note rimosse", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this , "Note rimosse" , Toast.LENGTH_SHORT).show()
         }
 
         btnStartRecognition.setOnClickListener {
             pitchDetector.scaleRecognition = true
             btnClearNotes.visibility = Button.VISIBLE
-            Toast.makeText(this, "Riconoscimento scala attivato", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this , "Riconoscimento scala attivato" , Toast.LENGTH_SHORT).show()
         }
 
         btnStopRecognition.setOnClickListener {
             pitchDetector.scaleRecognition = false
             findViewById<TextView>(R.id.ScaleTv).visibility = TextView.INVISIBLE
-            Toast.makeText(this, "Riconoscimento scala disattivato", Toast.LENGTH_SHORT).show()
+            btnClearNotes.visibility = Button.INVISIBLE
+            Toast.makeText(this , "Riconoscimento scala disattivato" , Toast.LENGTH_SHORT).show()
         }
 
         btnLogin.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
+            startActivity(Intent(this , LoginActivity::class.java))
         }
 
         btnRegister.setOnClickListener {
-            startActivity(Intent(this, Registration::class.java))
+            startActivity(Intent(this , Registration::class.java))
         }
 
         btnLogout.setOnClickListener {
@@ -84,6 +87,19 @@ class MainActivity : AppCompatActivity() {
             btnLogout.visibility = View.GONE
             btnLogin.visibility = View.VISIBLE
             btnRegister.visibility = View.VISIBLE
+        }
+
+        btnBackToMain.setOnClickListener {
+            findViewById<FrameLayout>(R.id.fragment_container).visibility = View.GONE
+            btnBackToMain.visibility = View.GONE
+            findViewById<RelativeLayout>(R.id.noteCard).visibility = View.VISIBLE
+            findViewById<SeekBar>(R.id.tuningBar).visibility = View.VISIBLE
+            findViewById<ImageView>(R.id.tuningIndicator).visibility = View.VISIBLE
+            findViewById<TextView>(R.id.ScaleTv).visibility = View.VISIBLE
+            findViewById<LinearLayout>(R.id.layoutScaleButtons).visibility = View.VISIBLE
+            findViewById<LinearLayout>(R.id.layoutButtons2).visibility = View.VISIBLE
+            btnLogout.visibility = View.VISIBLE
+            btnScaleList.visibility = View.VISIBLE
         }
 
         if (App.user != null) {
@@ -99,20 +115,29 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnScaleList.setOnClickListener {
-            val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
-            recyclerView.layoutManager = LinearLayoutManager(this)
-            recyclerView.adapter = App.user?.let { DbHandler.getScales(it) }?.let { ScaleList(it) }
-            recyclerView.visibility = View.VISIBLE
+            findViewById<RelativeLayout>(R.id.noteCard).visibility = View.GONE
+            findViewById<SeekBar>(R.id.tuningBar).visibility = View.GONE
+            findViewById<ImageView>(R.id.tuningIndicator).visibility = View.GONE
+            findViewById<TextView>(R.id.ScaleTv).visibility = View.GONE
+            findViewById<LinearLayout>(R.id.layoutScaleButtons).visibility = View.GONE
+            btnClearNotes.visibility = View.GONE
+            findViewById<LinearLayout>(R.id.layoutButtons2).visibility = View.VISIBLE
+            btnLogout.visibility = View.GONE
+            btnScaleList.visibility = View.GONE
+
+            findViewById<FrameLayout>(R.id.fragment_container).visibility = View.VISIBLE
+            btnBackToMain.visibility = View.VISIBLE
+
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container , ScaleListFragment()).commit()
         }
 
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int , permissions: Array<out String> , grantResults: IntArray
     ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        super.onRequestPermissionsResult(requestCode , permissions , grantResults)
         when (requestCode) {
             REQUEST_RECORD_AUDIO_PERMISSION -> {
                 permissionToRecordAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
@@ -121,15 +146,14 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        if(!permissionToRecordAccepted) finish()
+        if (!permissionToRecordAccepted) finish()
     }
 
     internal fun updateTuningBar(deviation: Double) {
         findViewById<SeekBar>(R.id.tuningBar).progress = (50 + deviation * 10).roundToInt()
 
-        if(deviation in -0.5..0.5)
-            findViewById<ImageView>(R.id.tuningIndicator).visibility = ImageView.VISIBLE
-        else
-            findViewById<ImageView>(R.id.tuningIndicator).visibility = ImageView.INVISIBLE
+        if (deviation in -0.5..0.5) findViewById<ImageView>(R.id.tuningIndicator).visibility =
+            ImageView.VISIBLE
+        else findViewById<ImageView>(R.id.tuningIndicator).visibility = ImageView.INVISIBLE
     }
 }
