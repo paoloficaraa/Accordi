@@ -5,6 +5,6 @@ import com.google.firebase.auth.FirebaseUser
 
 class App : Application() {
     companion object {
-        var utente: FirebaseUser? = null
+        var user: FirebaseUser? = null
     }
 }

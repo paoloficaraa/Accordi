@@ -103,8 +103,8 @@ class PitchDetector(private val context: MainActivity) {
             if (notes.size == 7 && scaleRecognition) {
                 val scale = NoteHandler.getScale(notes.map { it.note })
                 val scaleTv = context.findViewById<TextView>(R.id.ScaleTv)
-                if(App.utente != null) {
-                    DbHandler.saveScale(Scala(notes , scale) , App.utente!!)
+                if(App.user != null) {
+                    DbHandler.saveScale(Scale(notes , scale) , App.user!!)
                 }
                 scaleTv.text = context.getString(R.string.scale_text , scale)
                 scaleTv.visibility = TextView.VISIBLE

@@ -1,16 +1,16 @@
 package it.insubria.accordi
 
-data class Scala(val notes: List<Note>, val scale: String) {
+data class Scale(val notes: List<Note>, val scale: String) {
 
     override fun toString(): String {
-        return "Scala(notes=$notes, scale='$scale')"
+        return "Scale(notes=$notes, scale='$scale')"
     }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as Scala
+        other as Scale
 
         if (notes != other.notes) return false
         if (scale != other.scale) return false

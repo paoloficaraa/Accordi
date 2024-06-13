@@ -48,11 +48,23 @@ class Registration : AppCompatActivity() {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Toast.makeText(this, "Registrazione avvenuta con successo", Toast.LENGTH_SHORT).show()
-                        App.utente = auth.currentUser
+                        App.user = auth.currentUser
                         startActivity(Intent(this, MainActivity::class.java))
                         finish()
                     } else {
-                        Toast.makeText(this, "Errore in registrazione", Toast.LENGTH_SHORT).show()
+                        var message = ""
+                        when {
+                            task.exception?.message?.contains("email address is already in use")!! -> {
+                                message = "Indirizzo email già in uso"
+                            }
+                            task.exception?.message?.contains("least 6 characters")!! -> {
+                                message = "La password deve contenere almeno 6 caratteri"
+                            }
+                            else -> {
+                                message = "Errore in registrazione: ${task.exception?.message}"
+                            }
+                        }
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                     }
                 }
         }
@@ -94,7 +106,7 @@ class Registration : AppCompatActivity() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(this, "Registrazione con google avvenuta con successo", Toast.LENGTH_SHORT).show()
-                    App.utente = auth.currentUser
+                    App.user = auth.currentUser
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {

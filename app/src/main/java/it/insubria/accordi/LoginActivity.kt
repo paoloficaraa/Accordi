@@ -48,11 +48,24 @@ class LoginActivity : AppCompatActivity() {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         Toast.makeText(this, "Accesso avvenuto con successo", Toast.LENGTH_SHORT).show()
-                        App.utente = auth.currentUser
+                        App.user = auth.currentUser
                         startActivity(Intent(this, MainActivity::class.java))
                         finish()
                     } else {
-                        Toast.makeText(this, "Errore in accesso", Toast.LENGTH_SHORT).show()
+                        val message = when {
+                            task.exception?.message?.contains("password") == true -> {
+                                "Password errata"
+                            }
+
+                            task.exception?.message?.contains("email") == true -> {
+                                "Email non registrata"
+                            }
+
+                            else -> {
+                                "Errore sconosciuto"
+                            }
+                        }
+                        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                     }
                 }
         }
@@ -63,6 +76,21 @@ class LoginActivity : AppCompatActivity() {
             if (result.resultCode == Activity.RESULT_OK) {
                 val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
                 handleSignInResult(task)
+            } else {
+                val message = when {
+                    result.resultCode == Activity.RESULT_CANCELED -> {
+                        "Accesso con google annullato"
+                    }
+
+                    result.resultCode == Activity.RESULT_FIRST_USER -> {
+                        "Accesso primo utente"
+                    }
+
+                    else -> {
+                        "Errore sconosciuto"
+                    }
+                }
+                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -95,7 +123,7 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Toast.makeText(this, "Accesso avvenuto con successo", Toast.LENGTH_SHORT).show()
-                    App.utente = auth.currentUser
+                    App.user = auth.currentUser
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 } else {

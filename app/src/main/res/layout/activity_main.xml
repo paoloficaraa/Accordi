@@ -157,6 +157,16 @@
             android:text="Registrazione" />
 
         <Button
+            android:id="@+id/btnScaleList"
+            style="@style/Widget.Accordi.Button.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="0.5"
+            android:text="Scale rilevate"
+            android:visibility="gone" />
+
+        <Button
             android:id="@+id/btnLogout"
             style="@style/Widget.Accordi.Button.Colored"
             android:layout_width="0dp"
@@ -166,5 +176,10 @@
             android:text="Esci"
             android:visibility="gone" />
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

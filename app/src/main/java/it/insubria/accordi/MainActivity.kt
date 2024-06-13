@@ -15,6 +15,8 @@ import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import kotlin.math.roundToInt
 
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity() {
         val btnLogin = findViewById<Button>(R.id.btnLogin)
         val btnRegister = findViewById<Button>(R.id.btnRegistration)
         val btnLogout = findViewById<Button>(R.id.btnLogout)
+        val btnScaleList = findViewById<Button>(R.id.btnScaleList)
 
         btnClearNotes.setOnClickListener {
             pitchDetector.clearNotes()
@@ -77,20 +80,29 @@ class MainActivity : AppCompatActivity() {
 
         btnLogout.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
-            App.utente = null
+            App.user = null
             btnLogout.visibility = View.GONE
             btnLogin.visibility = View.VISIBLE
             btnRegister.visibility = View.VISIBLE
         }
 
-        if (App.utente != null) {
+        if (App.user != null) {
             btnLogout.visibility = View.VISIBLE
             btnLogin.visibility = View.GONE
             btnRegister.visibility = View.GONE
+            btnScaleList.visibility = View.VISIBLE
         } else {
             btnLogout.visibility = View.GONE
             btnLogin.visibility = View.VISIBLE
             btnRegister.visibility = View.VISIBLE
+            btnScaleList.visibility = View.GONE
+        }
+
+        btnScaleList.setOnClickListener {
+            val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
+            recyclerView.layoutManager = LinearLayoutManager(this)
+            recyclerView.adapter = App.user?.let { DbHandler.getScales(it) }?.let { ScaleList(it) }
+            recyclerView.visibility = View.VISIBLE
         }
 
     }
